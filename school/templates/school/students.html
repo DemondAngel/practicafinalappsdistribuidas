@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang = "en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+        <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <div>
+                <a class="btn btn-primary" id = "addBtn">Agregar registro</a>
+            </div>
+        </div>
+        <div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Sexo</th>
+                        <th>Clase</th>
+                        <th>Operacion</th>
+                    </tr>
+                </thead>
+                <tbody id="tb">
+                    {% for row in stu_list %}
+                    <tr nid="{{row.id}}">
+                        <td>{{row.id}}</td>
+                        <td>{{row.username}}</td>
+                        <td>{{row.age}}</td>
+                        <td>{{row.gender}}</td>
+                        <td>{{row.cs.title}}</td>
+                        <td>
+                            <a class = "fa fa-pencil-square-o"></a>
+                            <a class="glyphicon glyphicon-remove del-row"></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+
+</html>
