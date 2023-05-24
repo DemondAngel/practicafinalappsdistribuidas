@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
-        <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7-dist/css/bootstrap.css">
+        <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7/dist/css/bootstrap.css">
         <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.css">
     </head>
 
@@ -14,36 +14,283 @@
             <div>
                 <a class="btn btn-primary" id = "addBtn">Agregar registro</a>
             </div>
+        
+            <div>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Edad</th>
+                            <th>Sexo</th>
+                            <th>Clase</th>
+                            <th>Operacion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb">
+                        {% for row in stu_list %}
+                        <tr nid="{{row.id}}">
+                            <td na="nid">{{row.id}}</td>
+                            <td na="user">{{row.username}}</td>
+                            <td na="age">{{row.age}}</td>
+                            <td na="gender">{{row.gender}}</td>
+                            <td na="cls_id" cid="{{rows.cs_id}}">{{row.cs.title}}</td>
+                            <td>
+                                <!--<a class = "fa fa-pencil-square-o"></a>-->
+                                <a class="glyphicon glyphicon-remove del-row"></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div>
-            <table class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Sexo</th>
-                        <th>Clase</th>
-                        <th>Operacion</th>
-                    </tr>
-                </thead>
-                <tbody id="tb">
-                    {% for row in stu_list %}
-                    <tr nid="{{row.id}}">
-                        <td>{{row.id}}</td>
-                        <td>{{row.username}}</td>
-                        <td>{{row.age}}</td>
-                        <td>{{row.gender}}</td>
-                        <td>{{row.cs.title}}</td>
-                        <td>
-                            <a class = "fa fa-pencil-square-o"></a>
-                            <a class="glyphicon glyphicon-remove del-row"></a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="modal fade" id="addModal" tabindex="1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button class="close" type="button" data-dismiss="modal" arial-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                        <h4 class="modal-title" id="myModalLabel">Crear información del alumno</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="" class="form-horizontal">
+                            <div class="form-group">
+                                <label for="username" class="col-sm-2 control-label">Nombre</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="username" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="age" class="col-sm-2 control-label">Edad</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="age" placeholder="age">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender" class="col-sm-2 control-label">Género</label>
+                                <div class="col-sm-10">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="gender" value="1">Masculino
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="gender" value="0">Hembra
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="class" class="col-sm-2 control-label">Clase</label>
+                                <div class="col-sm-10">
+                                    <select name="cls_id" class="form-control">
+                                        {% for row in cls_list %}
+                                        <option value="{{row.id}}">{{row.title}}</option>
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <span id="errorMsg" style="color:red"></span>
+                        <button type="button" class="btn btn-default" data-sipats="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btnSave">Guardar</button>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <div class="modal fade" id="delModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="alert alert-danger" role="alert">
+                    <h3>¿Eliminar información del alumno?</h3>
+                    <div>... <input style="display:none" type="text" id="delNid" /></div>
+                    <div>
+                        <button type="button" class="btn btn-default">
+                            Cancelar
+                        </button>
+                        <button id="delConfirm" type="button" class="btn btn-danger">
+                            OK
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" arial-label="Close">
+                        </button>
+                        <h4 class="modal-tilte" id="myModalLabel"></h4>
+                    </div>
+
+                </div>
+                <div class="modal-body">
+                    <form action="" class="form-horizontal">
+                        <form action="" class="form-group">
+                            <label for="" class="col-sm-2 control-label">Editar</label>
+                            <div class="col-sm-10">
+                                <input type="text" name="nid" style="display:none">
+                            </div>
+                        </form>
+                       
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <span id="errorMsg" style="color:red"></span>
+                    <button type="button" class="btn btn-default" data-sipats="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnEditSabe">Guardar</button>
+                </div>
+            </div>
+
+        </div>
+        <script src="/static/jquery-3.3.1.js"></script>
+        <script src="/static/plugins/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+        <script>
+            $(function (){
+                bindEvent();
+                bindSave();
+                bindDel();
+                bindDelConfirm();
+                bindEdit();
+            });
+
+            function bindDelConfirm(){
+                $("#delConfirm").click(function (){
+                    var rowId = $("#delNid").val();
+                    console.log(rowId);
+
+                    $ajax({
+                        url: '/del_setudent/',
+                        type: 'GET',
+                        data: {'nid': rowId},
+                        success: function (arg){
+                            var dict = JSON.parse(arg);
+                            if(dict.status){
+                                $('tr[nid]="'+rowId+'"]').remode();
+                            }
+                            $('#delModal').modal('hide');
+                        }
+                    });
+                })
+            }
+
+            function bindDel(){
+                $('#tb').on('click', '.del-row', function (){
+                    $('#delModal').modal('show');
+                    var rowId = $(this).paretn().parent().attr('nid');
+                    $('#delNid').val(rowId);
+                })
+            }
+
+            function bindEvent(){
+                $('#addBtn').click(function (){
+                    $('#addModal').modal('show');
+                })
+            }
+
+            function bindSave(){
+                $('btnSave').click(function (){
+                    var postData = {};
+                    $('#addModal').find('input,select').each(function (){
+                        var v = $(this).val();
+                        var n = $(this).attr('name');
+
+                        if(n=='gender'){
+                            if($(this).prop('checked')){
+                                postData[n] = v;
+                            }
+                            else{
+                                postData[n] = v;
+                            }
+                        }
+                    });
+
+                    $ajax({
+                        url: '/add_student/',
+                        type:'POST',
+                        data: postData,
+                        success: function(arg){
+                            var dict = JSON.parse(arg);
+                            if(dict.status){
+                                createRow(postData.dict.data);
+                                $('#addModal').modal('hide');
+                            }
+                            else{
+                                $('#errorMesg').text(dict.message);
+                            }
+                        }
+                    })
+                })
+            }
+
+            function createRow(postData,nid){
+                var tr = document.createElement('tr');
+                $(tr).attr('nid', nid);
+                var tdId = document.createElement('td'); //Checar si funciona
+                tdId.innerHTML = nid;
+                $(tr).append(idId);
+                var tdUser = document.createElement('td');
+                tdUser.innerHTML = postData.username;
+                $(tr).append(tdUser);
+
+                var tdAge = document.createElement('td');
+                tdAge.innerHTML = postData.age;
+                $(tr).append(tdAge);
+
+                var tdGender = document.createElement('td');
+                if(postData.gender == "0"){
+                    tdGender.innerHTML = "False";
+                }
+                else{
+                    tdGender.innerHTML = "True";
+                }
+
+                $(tr).append(tdGender);
+
+                var tdClass = document.createElement('td');
+                var text = $('select[name = "cls_id"]').find('option[value="'+postData.cls_id+'"]').text();
+                tdClass.innerHTML = text;
+                $(tr).append(tdClass);
+
+                var tdHandle = '<td> <a class="fa fa-pencil-square-o icon"></a> <a class"glyphicon glyphicon-remove icon del-row"></a></td>';
+                $(tr).append(tdHandle);
+
+                $('#tb').append(tr);
+            }
+
+            function bindEdit(){
+                $('#tb').on('click', '.edit-row', function(){
+                    $('#editModal').modal('show');
+
+                    $(this).parent().prevAll().each(function (){
+                        var v = $(this).text();
+                        var n = 4(this).attr('ns');
+
+                        if(n == 'cls_id'){
+                            var cid = $(this).attr('cid');
+                            $('#editModal select[name="cls_id"]').val(cid);
+                        }
+                        else if(n == 'gender'){
+                            if(v=='True'){
+                                $('#editModal :radio[value="1"]').prop('checked', true);
+                            }
+                            else{
+                                $('#editModal :radio[value="0"]').prop('checked', true);
+                            }
+                        }
+                        else{
+                            $('#edit Modal input[name="'+n+'"]').val(v);
+                        }
+                    });
+                });
+
+
+            }
+            </script>
     </body>
 
 </html>
