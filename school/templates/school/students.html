@@ -56,7 +56,8 @@
                         <h4 class="modal-title" id="myModalLabel">Crear información del alumno</h4>
                     </div>
                     <div class="modal-body">
-                        <form action="" class="form-horizontal">
+                        <form class="form-horizontal">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label for="username" class="col-sm-2 control-label">Nombre</label>
                                 <div class="col-sm-10">
@@ -163,8 +164,8 @@
                     var rowId = $("#delNid").val();
                     console.log(rowId);
 
-                    $ajax({
-                        url: '/del_setudent/',
+                    $.ajax({
+                        url: '/school/del_setudent/',
                         type: 'GET',
                         data: {'nid': rowId},
                         success: function (arg){
@@ -193,7 +194,7 @@
             }
 
             function bindSave(){
-                $('btnSave').click(function (){
+                $('#btnSave').click(function (){
                     var postData = {};
                     $('#addModal').find('input,select').each(function (){
                         var v = $(this).val();
@@ -209,8 +210,8 @@
                         }
                     });
 
-                    $ajax({
-                        url: '/add_student/',
+                    $.ajax({
+                        url: '/school/add_student/',
                         type:'POST',
                         data: postData,
                         success: function(arg){
@@ -289,6 +290,25 @@
                 });
 
 
+            }
+
+            function bindEditConfirm(){
+                $('#btnEditSave').click(function() {
+                    $.ajax({
+                        url: '/school/edit_student/',
+                        type: 'POST',
+                        data: $('#fm').serialize(),
+                        dataType: 'JSON',
+                        success: function(arg){
+                            if(arg.code == 1000){
+                                window.location.reload();
+                            }
+                            else{
+                                alert(arg.message);
+                            }
+                        }
+                    });
+                })
             }
             </script>
     </body>

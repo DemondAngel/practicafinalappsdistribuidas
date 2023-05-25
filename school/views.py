@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from . import models
+from django.template import RequestContext
 import json
 # Create your views here.
 
@@ -10,9 +11,9 @@ def students(request):
 
 def add_student(request):
     response = {'status': True, 'message': None, 'data': None}
-
+    print("Si se ejecuta")
     try:
-        print(request.POST)
+        print(request.POST.get('username'))
         u = request.POST.get('username')
         a = request.POST.get('age')
         g = request.POST.get('gender')
@@ -24,12 +25,15 @@ def add_student(request):
             cs_id = c
         )
 
+        obj.save()
+
         response['data'] = obj.id
     except Exception as e:
+        print(e)
         response['status'] = False
         response['mensaje'] = 'Error de entrada del usuario'
     
-    result = json.dumpls(response, ensure_ascii= False)
+    result = json.dumps(response, ensure_ascii= False)
 
     return HttpResponse(result)
 
