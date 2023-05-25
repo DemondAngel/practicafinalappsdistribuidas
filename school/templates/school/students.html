@@ -6,7 +6,7 @@
         <meta charset="UTF-8">
         <title>Title</title>
         <link rel="stylesheet" href="/static/plugins/bootstrap-3.3.7/dist/css/bootstrap.css">
-        <link rel="stylesheet" href="/static/plugins/font-awesome/css/font-awesome.css">
+        <script src="https://kit.fontawesome.com/3b960f1cc2.js" crossorigin="anonymous"></script>
     </head>
 
     <body>
@@ -31,12 +31,17 @@
                         {% for row in stu_list %}
                         <tr nid="{{row.id}}">
                             <td na="nid">{{row.id}}</td>
-                            <td na="user">{{row.username}}</td>
+                            <td na="username">{{row.username}}</td>
                             <td na="age">{{row.age}}</td>
-                            <td na="gender">{{row.gender}}</td>
-                            <td na="cls_id" cid="{{rows.cs_id}}">{{row.cs.title}}</td>
+                            {% if row.gender %}
+
+                                <td na="gender">Masculino</td>
+                            {% else %}
+                                <td na="gender">Femenino</td>
+                            {%endif%}
+                            <td na="cls_id" cid="{{row.cs_id}}">{{row.cs.title}}</td>
                             <td>
-                                <!--<a class = "fa fa-pencil-square-o"></a>-->
+                                <a class = "fa fa-pencil-square-o edit-row"></a>
                                 <a class="glyphicon glyphicon-remove del-row"></a>
                             </td>
                         </tr>
@@ -127,24 +132,52 @@
                         </button>
                         <h4 class="modal-tilte" id="myModalLabel"></h4>
                     </div>
-
-                </div>
-                <div class="modal-body">
-                    <form action="" class="form-horizontal">
-                        <form action="" class="form-group">
-                            <label for="" class="col-sm-2 control-label">Editar</label>
+                    <div class="modal-body">
+                    <form class="form-horizontal" id="#fm">
+                        <input type="hidden" name="nid"/>
+                        <div class="form-group">
+                            <label for="username" class="col-sm-2 control-label">Nombre</label>
                             <div class="col-sm-10">
-                                <input type="text" name="nid" style="display:none">
+                                <input type="text" class="form-control" name="username" placeholder="Name">
                             </div>
-                        </form>
-                       
+                        </div>
+                        <div class="form-group">
+                            <label for="age" class="col-sm-2 control-label">Edad</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="age" placeholder="age">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender" class="col-sm-2 control-label">Género</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" value="1">Masculino
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="gender" value="0">Hembra
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="class" class="col-sm-2 control-label">Clase</label>
+                            <div class="col-sm-10">
+                                <select name="cls_id" class="form-control">
+                                    {% for row in cls_list %}
+                                    <option value="{{row.id}}">{{row.title}}</option>
+                                    {%endfor%}
+                                </select>
+                            </div>
+                        </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <span id="errorMsg" style="color:red"></span>
-                    <button type="button" class="btn btn-default" data-sipats="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="btnEditSabe">Guardar</button>
+                    <div class="modal-footer">
+                        <span id="errorMsg" style="color:red"></span>
+                        <button type="button" class="btn btn-default" data-sipats="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" id="btnEditSave">Guardar</button>
+                    </div>
                 </div>
+                
+                
             </div>
 
         </div>
@@ -157,6 +190,7 @@
                 bindDel();
                 bindDelConfirm();
                 bindEdit();
+                bindEditConfirm()
             });
 
             function bindDelConfirm(){
@@ -165,13 +199,13 @@
                     console.log(rowId);
 
                     $.ajax({
-                        url: '/school/del_setudent/',
+                        url: '/school/del_student/',
                         type: 'GET',
                         data: {'nid': rowId},
                         success: function (arg){
                             var dict = JSON.parse(arg);
                             if(dict.status){
-                                $('tr[nid]="'+rowId+'"]').remode();
+                                $('tr[nid="'+rowId+'"]').remove();
                             }
                             $('#delModal').modal('hide');
                         }
@@ -182,7 +216,7 @@
             function bindDel(){
                 $('#tb').on('click', '.del-row', function (){
                     $('#delModal').modal('show');
-                    var rowId = $(this).paretn().parent().attr('nid');
+                    var rowId = $(this).parent().parent().attr('nid');
                     $('#delNid').val(rowId);
                 })
             }
@@ -204,10 +238,12 @@
                             if($(this).prop('checked')){
                                 postData[n] = v;
                             }
-                            else{
-                                postData[n] = v;
-                            }
+                            
                         }
+                        else{
+                            postData[n] = v;
+                        }
+
                     });
 
                     $.ajax({
@@ -217,7 +253,7 @@
                         success: function(arg){
                             var dict = JSON.parse(arg);
                             if(dict.status){
-                                createRow(postData.dict.data);
+                                createRow(postData,dict.data);
                                 $('#addModal').modal('hide');
                             }
                             else{
@@ -233,7 +269,7 @@
                 $(tr).attr('nid', nid);
                 var tdId = document.createElement('td'); //Checar si funciona
                 tdId.innerHTML = nid;
-                $(tr).append(idId);
+                $(tr).append(tdId);
                 var tdUser = document.createElement('td');
                 tdUser.innerHTML = postData.username;
                 $(tr).append(tdUser);
@@ -256,8 +292,8 @@
                 var text = $('select[name = "cls_id"]').find('option[value="'+postData.cls_id+'"]').text();
                 tdClass.innerHTML = text;
                 $(tr).append(tdClass);
-
-                var tdHandle = '<td> <a class="fa fa-pencil-square-o icon"></a> <a class"glyphicon glyphicon-remove icon del-row"></a></td>';
+                
+                var tdHandle = '<td> <a class = "fa fa-pencil-square-o edit-row"></a> <a class="glyphicon glyphicon-remove del-row"></a></td>';
                 $(tr).append(tdHandle);
 
                 $('#tb').append(tr);
@@ -266,17 +302,18 @@
             function bindEdit(){
                 $('#tb').on('click', '.edit-row', function(){
                     $('#editModal').modal('show');
-
+                    
                     $(this).parent().prevAll().each(function (){
                         var v = $(this).text();
-                        var n = 4(this).attr('ns');
-
+                        var n = $(this).attr('na');
+                        
                         if(n == 'cls_id'){
                             var cid = $(this).attr('cid');
+                            console.log('Este es el cid' + cid);
                             $('#editModal select[name="cls_id"]').val(cid);
                         }
                         else if(n == 'gender'){
-                            if(v=='True'){
+                            if(v=='Masculino'){
                                 $('#editModal :radio[value="1"]').prop('checked', true);
                             }
                             else{
@@ -284,7 +321,7 @@
                             }
                         }
                         else{
-                            $('#edit Modal input[name="'+n+'"]').val(v);
+                            $('#editModal input[name="'+n+'"]').val(v);
                         }
                     });
                 });
@@ -294,10 +331,28 @@
 
             function bindEditConfirm(){
                 $('#btnEditSave').click(function() {
+
+                    var postData = {};
+                    $('#editModal').find('input,select').each(function (){
+                        var v = $(this).val();
+                        var n = $(this).attr('name');
+
+                        if(n=='gender'){
+                            if($(this).prop('checked')){
+                                postData[n] = v;
+                            }
+                            
+                        }
+                        else{
+                            postData[n] = v;
+                        }
+
+                    });
+
                     $.ajax({
                         url: '/school/edit_student/',
                         type: 'POST',
-                        data: $('#fm').serialize(),
+                        data: postData,
                         dataType: 'JSON',
                         success: function(arg){
                             if(arg.code == 1000){

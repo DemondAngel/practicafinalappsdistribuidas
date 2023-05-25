@@ -41,7 +41,8 @@ def del_student(request):
     ret = {'status': True}
 
     try:
-        nid = request.get('nid')
+        nid = request.GET.get('nid')
+        print(nid)
         models.Student.objects.filter(id=nid).delete()
     except Exception as e:
         ret['status': False]
@@ -50,14 +51,14 @@ def del_student(request):
 
 def edit_student(request):
     response = {'code': 1000, 'message': None}
-
+    
     try:
         nid = request.POST.get('nid')
-        user = request.POST.get('user')
+        user = request.POST.get('username')
         age = request.POST.get('age')
         gender = request.POST.get('gender')
         cls_id = request.POST.get('cls_id')
-
+        print(nid)
         models.Student.objects.filter(id=nid).update(
             username = user,
             age = age,
